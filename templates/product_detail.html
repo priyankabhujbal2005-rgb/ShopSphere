@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ product.name }} - ShopSphere</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #222;
+        }
+
+        header {
+            background-color: #222;
+            color: white;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 28px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+        }
+
+        .product-container {
+            max-width: 900px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-container h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .category {
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        .description {
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .price {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .stock {
+            color: green;
+            margin-bottom: 25px;
+        }
+
+        .back-button {
+            display: inline-block;
+            background-color: #222;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        footer {
+            margin-top: 60px;
+            background-color: #222;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>ShopSphere</h1>
+
+        <nav>
+            <a href="/">Home</a>
+            <a href="#">Products</a>
+            <a href="{% url 'cart' %}">Cart</a>
+            <a href="#">Login</a>
+        </nav>
+    </header>
+
+    <main class="product-container">
+
+        <div class="category">
+            Category: {{ product.category.name }}
+        </div>
+
+        <h2>{{ product.name }}</h2>
+
+        <p class="description">
+            {{ product.description }}
+        </p>
+
+        <div class="price">
+            ₹{{ product.price }}
+        </div>
+
+        <div class="stock">
+            Available Stock: {{ product.stock }}
+        </div>
+
+	<a href="{% url 'add_to_cart' product.slug %}">
+   	 Add to Cart
+	</a>
+
+        <a href="/" class="back-button">← Back to Products</a>
+
+    </main>
+
+    <footer>
+        <p>© 2026 ShopSphere. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
+
+def cart(request):
+    if not request.session.session_key:
+        request.session.create()
+
+    session_key = request.session.session_key
+
+    cart_items = CartItem.objects.filter(
+        session_key=session_key
+    )
+
+    return render(request, "cart.html", {
+        "cart_items": cart_items
+    })
